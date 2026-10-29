@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2e9d7">
+  <meta name="description" content="宋芷昕的个人 Portfolio：首页动效、关于我、实习经历、跳舞与旅行。">
+  <title>宋芷昕的 Portfolio · Zhixin Song</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="transition" aria-hidden="true"><span>✦</span></div>
+  <header class="site-header">
+    <button class="logo" data-room="home" aria-label="Home"><span class="logo-roof">⌂</span><span>ZHIXIN SONG</span></button>
+    <nav aria-label="Main navigation">
+      <button data-room="about" data-i18n="navAbout">关于我</button>
+      <button data-room="work" data-i18n="navWork">经历</button>
+      <button data-room="dance" data-i18n="navDance">爱好</button>
+      <button data-room="travel" data-i18n="navTravel">旅行</button>
+    </nav>
+    <div class="header-actions"><button id="langBtn" class="lang-btn" aria-label="Switch language">EN</button></div>
+  </header>
+  <button id="pageSnitch" class="page-snitch" type="button" aria-label="翻到下一页" title="翻到下一页"><svg viewBox="0 0 104 58" aria-hidden="true"><path class="snitch-wing wing-left" d="M43 28C31 8 15 5 4 14c7 0 13 4 18 10-7-1-13 0-18 5 13 1 22 6 33 13Z"/><path class="snitch-wing wing-right" d="M61 28C73 8 89 5 100 14c-7 0-13 4-18 10 7-1 13 0 18 5-13 1-22 6-33 13Z"/><circle class="snitch-ball" cx="52" cy="32" r="13"/><path class="snitch-detail" d="M45 22c-5 7-5 16 0 22m14-22c5 7 5 16 0 22M40 31h24"/></svg></button>
+
+  <main>
+    <section id="home" class="room active" aria-labelledby="homeTitle">
+      <div class="book-stage" id="bookStage" data-layout="orbit">
+        <div class="book-glow" aria-hidden="true"></div><div class="book-spark spark-a" aria-hidden="true"></div><div class="book-spark spark-b" aria-hidden="true"></div><div class="book-spark spark-c" aria-hidden="true"></div>
+        <div class="floating-motifs" aria-hidden="true"><span class="motif motif-owl"></span><span class="motif motif-orb"></span><span class="motif motif-wand"></span><span class="motif motif-glasses"></span><span class="motif motif-key"></span><span class="motif motif-book"></span></div>
+        <div class="portfolio-book" id="portfolioBook"><div class="book-back"></div><div class="book-spine" aria-hidden="true"></div><div class="book-pages"></div><div class="book-ribbon" aria-hidden="true"></div><button class="book-cover" id="openBook" type="button" aria-label="Open my story"><span class="book-jewel" aria-hidden="true">✦</span><span class="book-border"><h1 id="homeTitle">Portfolio</h1><small>my story begins ✦</small></span></button></div>
+        <nav class="magic-shortcuts" aria-label="Portfolio chapters">
+          <button class="magic-shortcut" type="button" data-room="about"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 44c6-8 8-17 8-28 0-4 5-5 8-2l13 13-6 16"/><path d="M9 43c11 5 35 5 46 0l-3 8c-15 7-30 7-40 0Z"/><path d="M19 39c9 4 22 5 28 0"/><path d="m32 28 3 3-3 3-3-3Z"/></svg><span data-i18n="magicAbout">关于我</span></button>
+          <button class="magic-shortcut" type="button" data-room="work"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M15 51 47 17l4-5 2 2-4 5-31 35Z"/><path d="m44 10 1-6m8 20 7 1M52 7l6-4M8 17l4 2m-8 6 5-1m5-15 1 5"/><path d="m13 12 2 2-2 2-2-2Zm43 25 2 2-2 2-2-2Z"/></svg><span data-i18n="magicWork">经历</span></button>
+          <button class="magic-shortcut" type="button" data-room="dance"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="34" r="10"/><path d="M21 29C12 20 7 17 3 20c-2 8 4 18 18 19m22-10c9-9 14-12 18-9 2 8-4 18-18 19M29 18l3-8 3 8M30 49l2 8 2-8"/><path d="M25 34h14"/></svg><span data-i18n="magicHobbies">爱好</span></button>
+        </nav>
+      </div>
+    </section>
+
+    <section id="about" class="room about-room" aria-labelledby="aboutTitle" hidden>
+      <div class="about-scene">
+        <div class="about-copy">
+          <article class="about-card intro-card">
+            <span class="kicker">ROOM 02 / ABOUT ME</span>
+            <h2 id="aboutTitle" data-i18n="aboutTitle">你好，我是芷昕。</h2>
+            <p class="about-intro" data-i18n="aboutText">本科毕业于宁波诺丁汉大学金融财务与管理专业，现在就读于康奈尔大学应用经济与管理硕士。我喜欢从数据里找线索，也喜欢在音乐里找节奏。英国诺丁汉大学的交换经历，让我多了一扇看世界的窗。</p>
+          </article>
+          <article class="about-card education-card">
+            <h3 data-i18n="education">教育旅程</h3>
+            <div class="education-flow">
+              <div class="education-entry"><img class="school-logo cornell-logo" src="assets/cornell-seal.svg" alt="Cornell University 校徽"><div><strong data-i18n="cornell">康奈尔大学</strong><small data-i18n="cornellDetail">应用经济与管理 · 硕士在读</small><time>2026.08 — 2027.07</time></div></div>
+              <div class="education-entry"><img class="school-logo nottingham-logo" src="assets/nottingham-logo.png" alt="宁波诺丁汉大学校徽"><div><strong data-i18n="nottinghamChina">宁波诺丁汉大学</strong><small data-i18n="nottinghamChinaDetail">金融财务与管理 · 本科</small><time>2022.09 — 2026.07</time></div></div>
+              <div class="education-entry exchange-entry"><img class="school-logo nottingham-logo" src="assets/nottingham-logo.png" alt="诺丁汉大学校徽"><div><strong data-i18n="nottinghamUK">英国诺丁汉大学</strong><small data-i18n="nottinghamUKDetail">交换经历 · 2024.09—2025.02</small></div></div>
+            </div>
+          </article>
+          <details class="mailbox about-mailbox"><summary aria-label="联系我"><span class="envelope-seal" aria-hidden="true">✦</span><span class="envelope-label" data-i18n="contactMe">联系我</span></summary><div class="mailbox-card"><small data-i18n="mailboxNote">欢迎写信给我</small><a href="mailto:songzhixin0518@163.com">songzhixin0518@163.com ↗</a></div></details>
+        </div>
+        <div class="framed-portrait"><div class="portrait-photo"><img src="assets/zhixin-portrait.jpg" alt="宋芷昕的个人照片"></div><img class="silver-frame" src="assets/silver-frame.png" alt="" aria-hidden="true"><span class="portrait-signature">ZHIXIN SONG · KRYSTAL</span></div>
+      </div>
+    </section>
+
+    <section id="work" class="room inner-room work-room" aria-labelledby="workTitle" hidden>
+      <div class="room-heading"><div><span class="kicker">ROOM 03 / THE JOURNEY</span><h2 id="workTitle" data-i18n="workTitle">书架上的几页故事。</h2><p data-i18n="workLead">三段实习，三个观察商业的窗口。</p></div><img class="work-oath" src="assets/oath-ribbon.png" alt="I solemnly swear I am up to no good."></div>
+      <div class="footstep-route" aria-label="实习经历路线"><span class="route-start">START</span><div class="footstep-trail" id="footstepTrail" aria-hidden="true"></div><span class="route-end">03 / NEXT CHAPTER</span></div>
+      <p class="route-hint">点击下面的一段经历，脚印会亮到那里。</p>
+      <div class="work-cards"><article class="work-card"><div class="work-meta"><span>01</span><time>2025.06 — 2025.09</time></div><h3 data-i18n="bytedance">字节跳动</h3><strong data-i18n="byteRole">生活服务 · NKA 餐饮行业运营</strong><p data-i18n="byteBody">跟踪重点商家交易与直播表现，参与商家分层、补贴实验和品牌活动。参与的联名活动首日支付 GMV 超 400 万元，十天活动期交易 GMV 超 1,000 万元。</p></article><article class="work-card"><div class="work-meta"><span>02</span><time>2024.06 — 2024.08</time></div><h3 data-i18n="eastbuy">东方甄选</h3><strong data-i18n="eastRole">东方甄选 APP 运营</strong><p data-i18n="eastBody">用销售数据与用户反馈支持果蔬选品、推荐位和活动执行；跟进 10 余款新品上架。相关活动点击率提升 22%，所跟进新品首月销量超 5,000 单。</p></article><article class="work-card"><div class="work-meta"><span>03</span><time>2023.05 — 2023.07</time></div><h3 data-i18n="longfor">龙湖集团</h3><strong data-i18n="longRole">宁波海曙天街 · 商业运营</strong><p data-i18n="longBody">制作招商材料，整理开业客流、销售与传播数据，支持活动复盘及跨方协调。所在商场开业前三天客流达 43 万人次，销售额超 2,700 万元。</p></article></div>
+    </section>
+
+    <section id="dance" class="room hobbies-room" hidden aria-labelledby="hobbiesTitle">
+      <div class="hobbies-paper">
+        <header class="hobbies-heading"><span class="kicker">ROOM 04 / LITTLE JOYS</span><h2 id="hobbiesTitle" data-i18n="hobbiesTitle">生活里，我喜欢的事。</h2></header>
+        <article class="hobby-row"><div class="hobby-copy"><span class="hobby-number">01 / DANCE</span><h3 data-i18n="hobbyDanceTitle">跳舞</h3><p data-i18n="hobbyDanceText">音乐响起，我就想和朋友们一起跳起来。排练、上台、拍下一张张合照，都是我很珍惜的快乐。</p></div><div class="hobby-visual dance-collage" aria-label="舞蹈照片拼贴"><div class="dance-pink"></div><div class="dance-mics" aria-hidden="true">♩ ♫ ♩</div><img src="assets/hobbies/dance-1.jpg" alt="舞蹈合照" loading="lazy"><img src="assets/hobbies/dance-2.jpg" alt="舞蹈作品合照" loading="lazy"><img src="assets/hobbies/dance-3.jpg" alt="舞蹈伙伴合照" loading="lazy"><img src="assets/hobbies/dance-4.jpg" alt="舞蹈团队合照" loading="lazy"><img src="assets/hobbies/dance-5.jpg" alt="舞蹈团队的大合照" loading="lazy"></div></article>
+        <article class="hobby-row"><div class="hobby-copy"><span class="hobby-number">02 / FOOD</span><h3 data-i18n="hobbyFoodTitle">美食</h3><p data-i18n="hobbyFoodText">我喜欢做饭，也喜欢和朋友围着一桌热气腾腾的食物聊天。每一道菜，都留着一点当时的生活。</p></div><div class="hobby-visual food-pan" aria-label="美食照片拼贴"><div class="pan-utensil pan-fork" aria-hidden="true"><img src="assets/hobbies/cutlery-cutout.png" alt=""></div><div class="pan-utensil pan-spoon" aria-hidden="true"><img src="assets/hobbies/cutlery-cutout.png" alt=""></div><div class="pan-handle"></div><div class="pan-body"><img src="assets/hobbies/food-1.jpg" alt="自己做的热锅料理" loading="lazy"><img src="assets/hobbies/food-2.jpg" alt="家常饭菜" loading="lazy"><img src="assets/hobbies/food-3.jpg" alt="和朋友共享的菜肴" loading="lazy"><img src="assets/hobbies/food-4.jpg" alt="和朋友一起准备火锅" loading="lazy"><img src="assets/hobbies/food-5.jpg" alt="满桌家常菜" loading="lazy"></div></div></article>
+        <article class="hobby-row"><div class="hobby-copy"><span class="hobby-number">03 / TRAVEL</span><h3 data-i18n="hobbyTravelTitle">旅行</h3><p data-i18n="hobbyTravelText">我爱把沿途的颜色和风景收进镜头：樱花、海边、雪山，还有在天黑以后依然发亮的城堡。</p><button class="hobby-link" type="button" data-room="travel" data-i18n="hobbyTravelLink">打开我的旅行地图 ↗</button></div><div class="hobby-visual camera-scene"><div class="camera-screen" aria-label="旅行照片画面"><img id="travelScreenPhoto" src="assets/hobbies/travel-1.jpg" alt="旅行中的樱花" loading="lazy"></div><img class="camcorder-base" src="assets/hobbies/camcorder-cutout.png" alt="复古摄像机" loading="lazy"><div class="camera-thumbs" aria-label="选择旅行照片"><button type="button" class="active" data-photo="assets/hobbies/travel-1.jpg" data-alt="旅行中的樱花" aria-label="樱花"><img src="assets/hobbies/travel-1.jpg" alt=""></button><button type="button" data-photo="assets/hobbies/travel-2.jpg" data-alt="海边" aria-label="海边"><img src="assets/hobbies/travel-2.jpg" alt=""></button><button type="button" data-photo="assets/hobbies/travel-3.jpg" data-alt="夜晚的城堡" aria-label="城堡"><img src="assets/hobbies/travel-3.jpg" alt=""></button><button type="button" data-photo="assets/hobbies/travel-4.jpg" data-alt="雪山" aria-label="雪山"><img src="assets/hobbies/travel-4.jpg" alt=""></button><button type="button" data-photo="assets/hobbies/travel-5.png" data-alt="海边的悬崖和灯塔" aria-label="灯塔"><img src="assets/hobbies/travel-5.png" alt=""></button><button type="button" data-photo="assets/hobbies/travel-6.png" data-alt="冰岛的冰块海滩" aria-label="冰岛"><img src="assets/hobbies/travel-6.png" alt=""></button><label class="camera-add-photo" title="上传旅行照片"><span aria-hidden="true">＋</span><input id="cameraPhotoUpload" type="file" accept="image/*" multiple aria-label="上传旅行照片"></label></div><p id="cameraUploadStatus" class="camera-upload-status" role="status" aria-live="polite"></p></div></article>
+      </div>
+    </section>
+
+    <section id="travel" class="room inner-room" aria-labelledby="travelTitle" hidden>
+      <div class="room-heading"><div><span class="kicker">ROOM 05 / MY WANDERINGS</span><h2 id="travelTitle" data-i18n="travelTitle">把世界一点点点亮。</h2><p data-i18n="travelLead">输入地名，选择匹配地点，经纬度会自动确认。每个地点都能挂多张照片。</p></div><span class="heading-icon" aria-hidden="true">✧</span></div>
+      <div class="map-layout"><div class="map-card"><div class="map-head"><span data-i18n="mapLabel">我的世界地图</span><span class="map-counter"><b id="placeCount">0</b> <span data-i18n="places">个地点</span></span></div><svg id="worldMap" viewBox="0 0 1000 500" role="img" aria-label="World map">
+        <defs><marker id="branchArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z"/></marker><pattern id="mapDots" width="37" height="37" patternUnits="userSpaceOnUse"><circle cx="3" cy="5" r="1"/><circle cx="25" cy="24" r=".65"/></pattern><radialGradient id="planetGlow"><stop offset="0" stop-color="#fff8cf"/><stop offset=".22" stop-color="#f6d889" stop-opacity=".85"/><stop offset="1" stop-color="#e6bd6a" stop-opacity="0"/></radialGradient><radialGradient id="planetBody" cx="28%" cy="22%"><stop offset="0" stop-color="#fff7d6"/><stop offset=".5" stop-color="#e5be71"/><stop offset="1" stop-color="#b97955"/></radialGradient></defs><rect width="1000" height="500" fill="url(#mapDots)"/>
+        <g class="map-land" aria-hidden="true"><path d="M50 126 77 96 119 73 163 78 192 96 212 91 239 114 251 136 274 141 278 164 260 171 253 201 231 213 224 245 200 266 189 253 175 257 155 228 135 224 124 204 103 199 91 181 65 175 52 155Z"/><path d="M193 56 214 46 230 53 225 73 208 80Z"/><path d="M247 261 278 246 308 255 323 278 342 286 344 321 331 347 324 370 302 408 288 441 274 429 269 393 253 371 246 335 231 313 229 282Z"/><path d="M407 109 434 87 464 91 475 103 498 98 514 112 548 106 569 121 600 119 615 104 643 105 665 120 701 121 715 107 752 109 779 116 816 109 846 131 871 144 899 166 918 188 906 207 876 205 860 226 835 226 814 209 789 209 781 236 755 242 739 220 720 220 704 240 676 239 655 219 635 219 615 236 592 222 573 230 554 210 528 212 511 190 486 190 470 172 448 172 434 151 414 147Z"/><path d="M476 201 512 205 534 223 560 226 575 249 566 274 550 286 542 318 526 341 510 369 492 360 477 330 456 314 452 278 440 249 449 226Z"/><path d="M793 305 821 286 854 290 881 302 904 326 925 343 920 365 896 377 871 369 850 382 820 367 799 347Z"/><path d="M566 353 574 365 567 385 560 372Z"/><path d="M149 69 159 52 177 46 188 59 178 75Z"/><path d="M946 406 958 409 955 419 943 416Z"/></g><g id="mapPins"></g></svg><div class="map-hint" data-i18n="mapHint">现在还是一张空白地图。地点在这里试玩后只存于当前浏览器；把清单发给我，我会写进正式网站。</div><small class="geo-credit">Place search: <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noopener">Open-Meteo / GeoNames</a></small></div><aside class="travel-side"><div class="travel-note"><span class="note-pin">📍</span><h3 data-i18n="firstPin">下一站，在哪里？</h3><p data-i18n="pinText">世界那么大，我想去看看。</p><button id="addPlaceBtn" class="primary-btn" data-i18n="lightPlace">＋ 点亮一个地方</button></div><div class="postcards"><h3 data-i18n="postcards">旅行明信片</h3><div id="placeCards" class="place-cards"><div class="empty-postcard"><span>✉</span><p data-i18n="postcardEmpty">第一张明信片，等你寄来。</p></div></div></div></aside></div>
+    </section>
+  </main>
+
+
+  <dialog id="placeDialog"><form id="placeForm" method="dialog"><div class="dialog-head"><div><small>TRAVEL MEMORY</small><h2 data-i18n="addTitle">点亮一个地点</h2></div><button type="button" id="closePlace" aria-label="Close">×</button></div><label><span data-i18n="placeName">地点名称</span><div class="search-row"><input id="placeQuery" name="name" required maxlength="70" placeholder="伦敦 / London / 冰岛" autocomplete="off"><button type="button" id="searchPlaceBtn" data-i18n="searchPlace">查找</button></div></label><div id="searchStatus" class="search-status" aria-live="polite"></div><div id="placeMatches" class="place-matches" role="listbox" aria-label="Matching places"></div><div id="confirmedPlace" class="confirmed-place" hidden></div><label><span data-i18n="travelPhoto">旅行照片（可选，可多选）</span><input name="photos" type="file" accept="image/*" multiple></label><p class="dialog-tip" data-i18n="searchTip">输入城市或国家，点击查找，再选择准确地点。经纬度会自动填写。</p><button class="primary-btn" type="submit" data-i18n="savePin" disabled>点亮地图 ✦</button></form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
