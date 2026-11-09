@@ -1,0 +1,60 @@
+/* A quieter Mincho-inspired Chinese type direction. */
+:root{--hand:'Noto Serif SC','Songti SC','STSong',serif}
+body,body[data-font]{--hand:'Noto Serif SC','Songti SC','STSong',serif;font-family:var(--hand)}
+.site-header,.font-picker,.machine-hint{display:none}
+.intro h1{font-family:var(--hand);font-weight:600;font-size:36px;line-height:1.35;letter-spacing:.03em;margin:23px 4px 0;color:#264b5f;text-shadow:1px 2px #fff9}
+.intro h1 span{font-family:var(--hand);font-size:1.13em;font-weight:600;color:#ae6969}
+.sign-arrow{background:linear-gradient(120deg,#d3ad80 0%,#f3e1c4 17%,#e3c397 58%,#b88e65 100%);box-shadow:inset 0 0 0 2px #9b7554,inset 14px 5px 22px #fff8,0 8px 0 #785a42,0 14px 13px #39566b73}
+.sign-arrow:before,.sign-arrow:after{background:radial-gradient(circle at 33% 30%,#fff8,#bd986d 55%,#6f513a);border-color:#765a42}
+
+/* Refined cabinet: deeper glass, metal seams, enamel fittings and a tactile knob. */
+.glass{background:radial-gradient(circle at 37% 21%,#fff9,#d6edf6a6 33%,#7fa9c16b 86%);border-color:#f0fbfc;box-shadow:inset 0 0 0 3px #9ac0d2,inset -18px -13px 29px #527e9fb8,inset 10px 12px 19px #fff9,0 11px 14px #517a959a,11px 2px 0 #739bb3}
+.glass-back{background:radial-gradient(circle at 45% 28%,#faffff,#b5d7e7 64%,#789eb9)}
+.glass-glare{background:linear-gradient(116deg,transparent 0 11%,#fff9 15% 20%,transparent 24% 62%,#fff6 70% 74%,transparent 80%)}
+.machine-body{background:linear-gradient(90deg,#5c829e 0%,#8fb8ce 13%,#d9eef3 31%,#a9ccdc 55%,#6e9bb7 82%,#426d8c 100%);box-shadow:inset 15px 0 20px #426985b8,inset -14px 0 20px #315f80a1,inset 0 12px 10px #fff,inset 0 -14px 15px #305f7f8f,0 9px 0 #608ba6}
+.machine-body:before{content:'';position:absolute;left:9%;right:9%;top:19px;height:3px;border-radius:50%;background:linear-gradient(90deg,transparent,#fff 25% 75%,transparent);opacity:.86}
+.machine-body:after{content:'';position:absolute;inset:8px;border:1px solid #e9f8fb99;border-radius:inherit;pointer-events:none}
+.machine-sign{top:284px;left:41%;width:18%;height:51px;border:4px double #fffdf2;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff9ef,#dfc5a0 64%,#ae8d6a);box-shadow:0 4px 8px #47708e8a,inset 0 0 0 2px #bd9b75;transform:translateZ(36px)}
+.machine-emblem{font-family:Georgia,serif;color:#916d54;font-size:25px;line-height:1;text-shadow:0 1px #fff}
+.coin{left:31px;top:62px;width:55px;height:55px;background:radial-gradient(circle at 30% 23%,#fffefa,#d5e9ed 65%,#79a3bb);border:5px solid #f0fcfb;box-shadow:inset 0 0 0 3px #8daec0,inset 2px 5px 7px #5b8198,2px 5px 6px #3e6886}
+.coin span{font-family:Georgia,serif;font-size:23px;color:#7c9aad;text-shadow:0 1px #fff}
+.body-label{display:flex;justify-content:center;gap:19px;bottom:21px;font-size:12px;color:#ecfafd;opacity:.9}
+.body-label span:nth-child(2){font-size:17px;margin-top:-4px}
+.chute{border-color:#f2fafb;box-shadow:inset 8px 10px 16px #234860,3px 6px 8px #385f7a}
+.lever{appearance:none;padding:0;cursor:pointer;z-index:7;transform-style:preserve-3d;transition:transform .25s,box-shadow .25s;box-shadow:inset 0 0 0 5px #688faa,4px 8px 9px #345e79,0 0 0 6px #fff6}
+.lever:before{content:'';position:absolute;inset:5px;border-radius:50%;border:1px dashed #e7f5fa9c;pointer-events:none}
+.lever:after{content:'';position:absolute;left:calc(50% - 7px);top:calc(50% - 7px);width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b5d1df 65%,#6b95af);box-shadow:0 2px 3px #3c6681;pointer-events:none}
+.lever i{width:70px;height:19px;transform:rotate(-39deg) translateZ(12px);background:linear-gradient(#fff,#c8e2eb 45%,#79a9c1 100%);border-color:#6a95ad;box-shadow:0 5px 5px #315b77}
+.lever:hover,.lever:focus-visible{transform:scale(1.08);box-shadow:inset 0 0 0 5px #688faa,4px 8px 9px #345e79,0 0 0 9px #fff9,0 0 22px #fff}
+.lever:hover i{transform:rotate(-19deg) translateZ(12px)}
+.lever:active{transform:scale(.96)}
+.lever:disabled{cursor:wait;opacity:1}
+.machine-tilt.mixing .lever{animation:knob-flash .65s ease-in-out infinite alternate}
+@keyframes knob-flash{to{box-shadow:inset 0 0 0 5px #688faa,4px 8px 9px #345e79,0 0 0 10px #fffc,0 0 26px #fffc}}
+.mini-capsule{border:3px solid #fff9;box-shadow:inset -10px -12px 14px #557f9e84,inset 8px 6px 10px #fff,4px 7px 8px #3c68855e}
+.mini-capsule:after{content:'✧';left:22px;top:16px;font-family:Georgia,serif;font-size:24px;color:#fff}
+
+/* The notebook is a small sticker beside the machine, with a tactile peel motion. */
+.action-panel{max-width:170px;align-self:end;margin:0 0 17vh;display:grid;place-items:center}
+.book-sticker{position:relative;width:112px;height:120px;border:0;background:none;padding:0;transform:rotate(9deg);filter:drop-shadow(6px 10px 5px #3557756b);animation:sticker-bob 4s ease-in-out infinite;cursor:pointer}
+.sticker-page{position:absolute;inset:8px 9px 11px 13px;background:linear-gradient(130deg,#fffdf6,#eadcc3);border:4px solid #fff8ea;border-radius:10px 10px 16px 10px;box-shadow:inset 0 0 0 2px #c2a88b,0 5px 0 #ae8c72;transform:rotate(-3deg);transition:transform .3s}
+.sticker-page:before{content:'';position:absolute;left:-12px;top:11px;bottom:12px;width:15px;background:repeating-linear-gradient(to bottom,#72919b 0 5px,transparent 5px 17px);border-radius:5px}
+.sticker-page:after{content:'';position:absolute;right:-1px;bottom:-1px;width:25px;height:25px;background:linear-gradient(135deg,#e1c9a9 50%,#fff 51%);clip-path:polygon(0 100%,100% 0,100% 100%);border-radius:0 0 10px 0}
+.sticker-page i{position:absolute;left:22px;right:16px;height:2px;background:#9db8bd;border-radius:4px}.sticker-page i:nth-child(1){top:27px}.sticker-page i:nth-child(2){top:43px}.sticker-page i:nth-child(3){top:59px}
+.sticker-page b{position:absolute;right:2px;top:-16px;width:40px;height:40px;display:grid;place-items:center;color:#fff6e4;font:normal 26px Georgia,serif;background:#ba7979;border:3px solid #fff6df;border-radius:50%;box-shadow:0 3px 5px #674e4b6b}
+.book-sticker:hover .sticker-page,.book-sticker:focus-visible .sticker-page{transform:rotate(-12deg) translateY(-7px)}
+.book-sticker:focus-visible{outline:3px solid #fff;outline-offset:5px;border-radius:15px}
+.sticker-dot{position:absolute;z-index:5;right:3px;top:8px;width:10px;height:10px;background:#b95c67;border:2px solid #fff;border-radius:50%;box-shadow:0 0 7px #fff}
+@keyframes sticker-bob{0%,100%{transform:translateY(0) rotate(9deg)}50%{transform:translateY(-7px) rotate(4deg)}}
+.result-heading,.paper-top,.paper-bottom{display:none}
+.result-stage{min-height:530px;padding-top:25px}.result-capsule{margin-top:20px}.paper{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center}.paper-number{font-size:14px;margin:0 0 20px}.paper-text{font-family:var(--hand);font-weight:600;font-size:36px;line-height:1.4}
+.result-buttons{gap:16px;margin-top:28px}
+.save-button,.again-button{opacity:0;width:61px;height:61px;display:grid;place-items:center;padding:0;border-radius:50%;font-family:Georgia,serif;font-size:33px;box-shadow:0 4px 12px #24475b5c}
+.save-button{background:#fff9f0;color:#3d6072}.again-button{background:#fff2;color:#fff}
+.save-glyph{position:relative;font-size:30px;line-height:1}.save-glyph b{position:absolute;right:-11px;top:-5px;font-family:'Noto Sans SC',sans-serif;font-size:18px;font-weight:600;background:#be7678;color:#fff;width:22px;height:22px;border-radius:50%;line-height:21px}
+.result-stage.open .save-button,.result-stage.open .again-button{opacity:1}
+.book-header h2,.book-item-text,.book-header p,.book-empty,.book-footer{font-family:var(--hand)}
+.book-header h2{font-weight:600;font-size:34px}.book-item-text{font-weight:500;font-size:21px}.book-header p{font-size:15px}.book-footer{font-size:14px}
+@media(max-width:1100px){.action-panel{grid-column:auto;margin-bottom:16vh;max-width:130px}}
+@media(max-width:700px){.intro h1{font-size:35px;margin-top:24px}.machine-area{transform:translateX(31px)}.action-panel{position:absolute;right:6px;top:402px;width:92px;max-width:92px;margin:0;z-index:9}.book-sticker{width:84px;height:92px}.sticker-page b{width:30px;height:30px;font-size:20px;right:-4px;top:-13px}.sticker-page i{left:16px;right:9px}.sticker-page i:nth-child(1){top:23px}.sticker-page i:nth-child(2){top:36px}.sticker-page i:nth-child(3){top:49px}.paper-text{font-size:31px}.save-button,.again-button{width:58px;height:58px}}
+@media(prefers-reduced-motion:reduce){.book-sticker,.machine-tilt.mixing .lever{animation:none!important}}

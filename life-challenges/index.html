@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#b4d4e8">
+  <meta name="description" content="从一百件人生小挑战中，抽取今天的勇气。">
+  <title>人生的 100 个小挑战 · 雪日扭蛋机</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="redesign.css">
+  <link rel="stylesheet" href="minimal.css">
+  <link rel="stylesheet" href="features.css">
+  <link rel="stylesheet" href="polish.css">
+  <link rel="stylesheet" href="language.css">
+</head>
+<body>
+  <div class="scene" id="scene">
+    <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch to English">EN</button>
+    <div class="sky-glow"></div><div class="moon"></div><div class="snowfall" id="snowfall" aria-hidden="true"></div>
+    <div class="mountains" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="town" aria-hidden="true"><div class="house h1"><b></b></div><div class="house h2"><b></b></div><div class="house h3"><b></b></div><div class="tree t1"></div><div class="tree t2"></div><div class="tree t3"></div></div>
+    <div class="ground" aria-hidden="true"></div><div class="snow-decor" aria-hidden="true"><div class="snowman"><i></i><b></b></div><div class="fir fir-a"></div><div class="fir fir-b"></div><div class="fir fir-c"></div><div class="gift gift-a"></div><div class="gift gift-b"></div><div class="stars">✳ &nbsp; ✦ &nbsp; ✳</div></div>
+    <header class="site-header" aria-hidden="true"></header>
+    <main class="main">
+      <div class="intro"><div class="signpost"><div class="sign-rope rope-left"></div><div class="sign-rope rope-right"></div><div class="sign-arrow"><h1 id="mainTitle">人生的<span>100</span>个<br>小挑战</h1></div></div></div>
+      <div class="machine-area">
+        <div class="machine-shadow"></div>
+        <div class="machine-tilt" id="machineTilt" aria-label="立体扭蛋机">
+          <div class="machine-side"></div><div class="machine-top"></div>
+          <div class="machine-face">
+            <div class="machine-sign" aria-hidden="true"><span class="machine-emblem">✧</span></div>
+            <div class="glass"><div class="glass-back"></div><div class="capsules" id="capsules" aria-hidden="true"></div><div class="glass-glare"></div><div class="dome-rim"></div></div>
+            <div class="machine-body"><span class="metal-line"></span><div class="coin" aria-hidden="true"><span>✦</span></div><button class="lever" id="drawBtn" type="button" aria-label="转动旋钮，抽一个挑战" title="转动旋钮，抽一个挑战"><i></i></button><div class="chute"><div class="chute-inner"></div></div><div class="body-label" aria-hidden="true"><span>✦</span><span>✦</span><span>✦</span></div></div>
+            <div class="machine-foot"></div>
+          </div>
+        </div>
+        <div class="tray"><span>✦</span><i></i></div>
+      </div>
+      <div class="action-panel"><button id="openBookBtn" class="book-sticker" type="button" aria-label="打开记录本" title="打开记录本"><span class="sticker-page"><i></i><i></i><i></i><b>✦</b></span><span id="bookBadge" class="sticker-dot" hidden></span></button></div>
+    </main>
+  </div>
+  <div class="result-overlay" id="resultOverlay" hidden><div class="result-backdrop"></div><div class="result-stage" role="dialog" aria-modal="true" aria-labelledby="resultTitle"><button id="closeResult" class="close-button" type="button" aria-label="关闭">×</button><div class="result-heading" id="resultTitle">你的今日挑战来了 ✦</div><div class="result-capsule" id="resultCapsule"><div class="capsule-top"></div><div class="capsule-bottom"></div><div class="capsule-star">✦</div></div><div class="paper" id="paper"><div class="paper-top">A LITTLE ADVENTURE FOR YOU</div><div class="paper-number" id="paperNumber">NO. 001</div><div class="paper-text" id="paperText"></div><div class="paper-bottom">愿你在平凡的一天里，遇见一点惊喜。 ✳</div></div><div class="result-buttons"><button id="saveBtn" class="save-button" type="button" aria-label="放进记录本" title="放进记录本"><span class="save-glyph" aria-hidden="true">▤<b>＋</b></span></button><button id="againBtn" class="again-button" type="button" aria-label="再抽一个" title="再抽一个"><span aria-hidden="true">↻</span></button></div></div></div>
+  <div class="book-overlay" id="bookOverlay" hidden><div class="book-backdrop"></div><section class="notebook" role="dialog" aria-modal="true" aria-labelledby="bookTitle"><button id="closeBookBtn" class="book-close" type="button" aria-label="关闭记录本">×</button><div class="book-spine" aria-hidden="true"></div><div class="book-header"><small id="bookKicker">MY LITTLE ADVENTURES</small><h2 id="bookTitle">小挑战记录本</h2><p id="bookSummary">把想做的小事，慢慢完成。</p></div><div id="bookList" class="book-list"></div><div class="book-footer" id="bookFooter">每打一个勾，都是人生里闪亮的一页 ✦</div></section></div>
+  <script type="module" src="script.js?v=4"></script>
+</body>
+</html>

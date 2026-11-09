@@ -1,0 +1,22 @@
+/* Quiet winter scene inspired by the supplied snowy landscape references. */
+.scene{min-height:100svh;background:#dbeaf2 url('snow-landscape.jpg') center center/cover no-repeat}
+.sky-glow,.moon,.mountains,.town,.ground,.snow-decor{display:none}
+.snowfall .flake{opacity:.35!important}
+.site-header{position:absolute;top:0;left:0;right:0;padding:27px 34px;color:#3c6578;font-family:Georgia,serif;font-size:12px;letter-spacing:.18em}
+.main{min-height:100svh;max-width:1460px;grid-template-columns:minmax(220px,1fr) minmax(390px,500px) minmax(190px,1fr);gap:0;padding:48px 4vw 24px;align-items:center}
+.intro{min-height:0;padding:0;align-self:end;margin-bottom:17vh}
+.signpost{transform:scale(.85) rotate(-5deg);transform-origin:center bottom;height:305px}
+.sign-arrow{background:linear-gradient(145deg,#f5ead7,#d7bca0);box-shadow:inset 0 0 0 2px #a88463,0 9px 0 #9a7357,0 11px 0 #fff8}
+.intro h1{margin:28px 4px 12px;font-size:48px;color:#345b6e}
+.machine-area{height:690px;min-height:690px;align-self:end}
+.machine-tilt{transform:rotateY(-11deg) rotateX(3deg)}
+.machine-hint{bottom:0;color:#345b6d;font-size:15px;text-shadow:0 1px 5px white}
+.action-panel{align-self:end;margin:0 0 13vh 0;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;transform:none;text-align:center;width:100%;max-width:240px;justify-self:center}
+.draw-button{margin:0;justify-content:center;gap:10px;background:#bb6a70;color:#fff;border:2px solid #fff8;box-shadow:0 6px 0 #895b60,0 10px 20px #4d728057;font-size:28px;white-space:nowrap}
+.draw-button b{font-size:22px}.draw-button:hover{transform:translateY(-3px)}
+.progress{display:inline-block;margin:22px 0 0;padding:0;background:none;border:0;box-shadow:none;color:#365d71;font-size:22px;text-shadow:0 1px 7px #fff}.progress strong{font-size:25px;color:#b86c70}
+.text-button{margin:5px auto 0;color:#496d7f;font-size:18px;text-shadow:0 1px 5px white}
+.result-backdrop{background:#31546ec2;backdrop-filter:blur(7px)}
+@media(max-width:1100px){.main{grid-template-columns:minmax(180px,1fr) minmax(360px,450px) minmax(150px,1fr);padding:50px 15px 25px}.intro{margin-bottom:15vh}.signpost{transform:scale(.7) rotate(-5deg);transform-origin:center bottom}.machine-area{height:650px;min-height:650px}.machine-tilt{transform:scale(.86) rotateY(-11deg)!important}.action-panel{grid-column:auto;margin:0 0 15vh 0;max-width:200px}.draw-button{font-size:23px;padding:9px 11px}.progress{font-size:19px}}
+@media(max-width:700px){.scene{background-position:37% center;background-size:auto 100%}.site-header{padding:15px 18px;font-size:10px}.main{display:flex;flex-direction:column;min-height:100svh;padding:35px 10px 35px;gap:0}.intro{align-self:center;margin:0;height:150px;width:100%;display:flex;align-items:flex-start;justify-content:center}.signpost{transform:scale(.51) rotate(-5deg);transform-origin:top center;margin:0;height:305px}.machine-area{width:100%;height:425px;min-height:425px;align-self:center;margin:0}.machine-tilt{transform:scale(.62) rotateY(-11deg)!important;transform-origin:center center}.machine-shadow{bottom:7px}.machine-hint{bottom:-4px;font-size:13px}.action-panel{align-self:center;margin:18px 0 0;max-width:260px;width:100%}.draw-button{font-size:25px;padding:8px 18px}.progress{margin-top:14px}.text-button{margin-top:0}.snowfall .flake{opacity:.27!important}}
+@media(max-width:420px){.intro{height:140px}.machine-area{height:395px;min-height:395px}.machine-tilt{transform:scale(.58) rotateY(-11deg)!important}.action-panel{margin-top:14px}}
