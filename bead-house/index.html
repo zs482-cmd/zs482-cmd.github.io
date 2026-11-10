@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e8dff4">
+  <title>拼豆小屋 · Bead Atelier</title>
+  <meta name="description" content="走进冬日拼豆小屋，把照片变成可打印的 MARD 拼豆图纸。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <section id="outside" class="outside" aria-label="拼豆小屋入口">
+      <img class="cottage-art" src="assets/snow-cottage.jpg" alt="雪夜里亮着灯的拼豆小屋">
+      <div class="sky-glow"></div>
+      <div class="snow snow-near" aria-hidden="true"></div>
+      <div class="snow snow-far" aria-hidden="true"></div>
+      <div class="welcome">
+        <span class="eyebrow">WELCOME TO THE BEAD ATELIER</span>
+        <h1>拼豆小屋<span class="star">✦</span></h1>
+        <p>把喜欢的瞬间，一颗一颗留住。</p>
+      </div>
+      <button id="enterHouse" class="door-hit" aria-label="点击小屋，进入拼豆工作台"><span>推门进入 <b>↗</b></span></button>
+      <div class="entry-note">轻轻敲门，开始今天的创作 <span>↓</span></div>
+    </section>
+
+    <section id="atelier" class="atelier" aria-label="拼豆工作台" hidden>
+      <div class="room-light" aria-hidden="true"></div>
+      <header class="room-header">
+        <button id="goOutside" class="icon-button" aria-label="返回小屋">← <span>小屋外</span></button>
+        <div class="room-brand"><span class="brand-icon">✳</span> 拼豆工作台 <small>BEAD ATELIER</small></div>
+        <div class="header-mark">MADE WITH LITTLE MOMENTS ✦</div>
+      </header>
+      <div class="room-content">
+        <div class="room-intro"><span class="eyebrow dark">YOUR LITTLE CREATIVE CORNER</span><h2>今天想拼什么？</h2><p>选一张喜欢的照片，把它变成手边的小小作品。</p></div>
+        <div class="workbench">
+          <aside class="controls-panel">
+            <div class="panel-top"><span class="step">01 / 03</span><h3>放进一张照片</h3><p>图片只在你的浏览器里处理，不会上传到服务器。</p></div>
+            <label id="uploadZone" class="upload-zone" for="imageInput" tabindex="0"><input id="imageInput" type="file" accept="image/*" hidden><span class="upload-icon">▧</span><strong>点击或拖入图片</strong><small>JPG、PNG、WEBP · 建议主体清晰</small><img id="sourceThumb" alt="已选择的图片预览" hidden></label>
+            <div class="divider"></div>
+            <div class="panel-top"><span class="step">02 / 03</span><h3>选择豆板大小</h3><p>每格是一颗拼豆。尺寸越大，细节越丰富。</p></div>
+            <div class="board-options" role="radiogroup" aria-label="豆板尺寸"><label><input type="radio" name="boardSize" value="52" checked><span><b>52 × 52</b><small>一块豆板 · 2,704 格</small></span></label><label><input type="radio" name="boardSize" value="104"><span><b>104 × 104</b><small>四块豆板 · 10,816 格</small></span></label></div>
+            <label class="range-label" for="colorLimit">使用颜色 <strong id="colorLimitValue">24</strong> 种</label><input id="colorLimit" class="range" type="range" min="6" max="48" value="24">
+            <p class="tiny-hint">色号采用你提供的 MARD 272 色表。实际豆色会受屏幕与批次影响。</p>
+            <button id="generateBtn" class="generate-button" disabled><span>生成拼豆图纸</span><span>✦</span></button>
+          </aside>
+
+          <section class="preview-panel" aria-live="polite">
+            <div class="preview-top"><div><span class="step">03 / 03</span><h3>你的拼豆图纸</h3></div><div id="boardBadge" class="board-badge">等待照片</div></div>
+            <div id="boardWrap" class="board-wrap"><div id="emptyPreview" class="empty-preview"><div class="sample-board" aria-hidden="true"><span>✿</span></div><strong>图纸会在这里慢慢出现</strong><p>上传照片，挑选豆板，再按下生成。</p></div><canvas id="boardCanvas" aria-label="拼豆图纸预览" hidden></canvas></div>
+            <div id="resultTools" class="result-tools" hidden><div class="tool-note">点选下方颜色，再点图纸上的豆子可以手动修改。</div><div class="tool-actions"><button id="downloadBtn" type="button">↓ 下载图纸 PNG</button><button id="printBtn" type="button">▤ 打印图纸</button></div></div>
+            <div id="paletteArea" class="palette-area" hidden><div class="palette-heading"><h4>配色与用量</h4><span id="beadTotal"></span></div><div id="paletteList" class="palette-list"></div></div>
+          </section>
+        </div>
+        <footer class="room-footer">ONE BEAD AT A TIME · 把日子拼成喜欢的模样</footer>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
