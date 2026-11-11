@@ -321,6 +321,35 @@ function makePattern() {
             }
           }
         }
+        // Close isolated one- or two-bead holes only when the artwork also
+        // continues directly above and below. This catches tiny holes in a
+        // bow without joining genuinely separate shapes or the background.
+        if (document.querySelector('input[name="sourceStyle"]:checked').value === 'pixel') {
+          const beforeHoles = board.slice();
+          for (let y = 1; y < boardSize - 1; y++) for (let x = 1; x < boardSize - 1; x++) {
+            const index = y * boardSize + x;
+            if (beforeHoles[index] || !beforeHoles[index - 1]) continue;
+            let end = x;
+            while (end < boardSize - 1 && !beforeHoles[y * boardSize + end] && end - x < 3) end++;
+            const gap = end - x;
+            if (gap < 1 || gap > 2 || !beforeHoles[y * boardSize + end]) continue;
+            for (let gx = x; gx < end; gx++) {
+              const cell = y * boardSize + gx;
+              if (!beforeHoles[cell - boardSize] || !beforeHoles[cell + boardSize]) continue;
+              const maskX = Math.min(maskSize - 1, Math.floor((gx + .5) / boardSize * maskSize));
+              const maskY = Math.min(maskSize - 1, Math.floor((y + .5) / boardSize * maskSize));
+              if (manualMask[maskY * maskSize + maskX] === 0) continue;
+              const offset = cell * 4;
+              const pixelRgb = [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
+              const target = lab(pixelRgb);
+              const white = Math.min(...pixelRgb) >= 225 && Math.max(...pixelRgb) - Math.min(...pixelRgb) <= 22;
+              if (white || backgroundLabs.every((corner) => distance(target, corner) > 20 ** 2)) {
+                board[cell] = white ? 'H2' : nearest(target, chosen).code;
+              }
+            }
+            x = end - 1;
+          }
+        }
       }
       selectedCode = null;
       renderBoard();
