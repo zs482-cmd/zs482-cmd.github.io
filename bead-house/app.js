@@ -335,17 +335,20 @@ function makePattern() {
             if (gap < 1 || gap > 2 || !beforeHoles[y * boardSize + end]) continue;
             for (let gx = x; gx < end; gx++) {
               const cell = y * boardSize + gx;
-              if (!beforeHoles[cell - boardSize] || !beforeHoles[cell + boardSize]) continue;
+              if (!beforeHoles[cell - boardSize] && !beforeHoles[cell + boardSize]) continue;
               const maskX = Math.min(maskSize - 1, Math.floor((gx + .5) / boardSize * maskSize));
               const maskY = Math.min(maskSize - 1, Math.floor((y + .5) / boardSize * maskSize));
               if (manualMask[maskY * maskSize + maskX] === 0) continue;
               const offset = cell * 4;
               const pixelRgb = [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
-              const target = lab(pixelRgb);
               const white = Math.min(...pixelRgb) >= 225 && Math.max(...pixelRgb) - Math.min(...pixelRgb) <= 22;
-              if (white || backgroundLabs.every((corner) => distance(target, corner) > 20 ** 2)) {
-                board[cell] = white ? 'H2' : nearest(target, chosen).code;
-              }
+              const neighbors = [beforeHoles[cell - 1], beforeHoles[cell + 1], beforeHoles[cell - boardSize], beforeHoles[cell + boardSize]].filter(Boolean);
+              const frequency = new Map();
+              for (const code of neighbors) frequency.set(code, (frequency.get(code) || 0) + 1);
+              const neighborCodes = [...frequency.keys()].map((code) => colorByCode.get(code));
+              const strongest = Math.max(...frequency.values());
+              const candidates = neighborCodes.filter((color) => frequency.get(color.code) === strongest);
+              board[cell] = white ? 'H2' : nearest(lab(pixelRgb), candidates).code;
             }
             x = end - 1;
           }
