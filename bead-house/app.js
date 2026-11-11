@@ -290,6 +290,38 @@ function makePattern() {
       const chosen = [...counts].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([code]) => colorByCode.get(code));
       // Reassign every cell using only the dominant colors to keep the chart practical.
       board = labs.map((target, index) => target ? (forcedWhite[index] ? 'H2' : nearest(target, chosen).code) : null);
+      // Restore short horizontal gaps inside a subject. A disconnected pale
+      // outline may fool the selection mask even though the source pixels are
+      // plainly white or colored artwork rather than the cream background.
+      if (selectionPreset === 'main' || selectionPreset === 'main-decor') {
+        const rowRight = Array.from({ length: boardSize }, (_, y) => {
+          for (let x = boardSize - 1; x >= 0; x--) if (board[y * boardSize + x]) return x;
+          return -1;
+        });
+        const backgroundLabs = [0, boardSize - 1, boardSize * (boardSize - 1), boardSize * boardSize - 1]
+          .map((index) => lab([pixels[index * 4], pixels[index * 4 + 1], pixels[index * 4 + 2]]));
+        for (let y = 0; y < boardSize; y++) {
+          const current = rowRight[y];
+          let upper = -1, lower = -1;
+          for (let step = 1; step <= 4 && y - step >= 0; step++) {
+            if (rowRight[y - step] >= current + 4) { upper = y - step; break; }
+          }
+          for (let step = 1; step <= 4 && y + step < boardSize; step++) {
+            if (rowRight[y + step] >= current + 4) { lower = y + step; break; }
+          }
+          if (upper < 0 || lower < 0 || lower - upper > 4 || Math.abs(rowRight[upper] - rowRight[lower]) > 8) continue;
+          const rightEdge = Math.round(rowRight[upper] + (rowRight[lower] - rowRight[upper]) * (y - upper) / (lower - upper));
+          for (let x = current + 1; x <= rightEdge; x++) {
+            const index = y * boardSize + x, offset = index * 4;
+            const rgb = [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
+            const white = Math.min(...rgb) >= 225 && Math.max(...rgb) - Math.min(...rgb) <= 22;
+            const target = lab(rgb);
+            if (white || backgroundLabs.every((corner) => distance(target, corner) > 20 ** 2)) {
+              board[index] = white ? 'H2' : nearest(target, chosen).code;
+            }
+          }
+        }
+      }
       selectedCode = null;
       renderBoard();
       renderPalette();
