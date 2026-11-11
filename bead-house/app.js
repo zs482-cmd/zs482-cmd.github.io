@@ -163,9 +163,22 @@ function analyzeRegions() {
       left[y] = Math.min(left[y], x);
       right[y] = Math.max(right[y], x);
     }
+    // Bridge short breaks in the outline (often caused by pale bow/face pixels
+    // merging with the background). Keep long empty rows outside the subject.
+    for (let y = 1; y < maskSize - 1; y++) {
+      if (right[y] >= 0 || right[y - 1] < 0 || right[y + 1] < 0) continue;
+      left[y] = Math.round((left[y - 1] + left[y + 1]) / 2);
+      right[y] = Math.round((right[y - 1] + right[y + 1]) / 2);
+    }
     for (let y = 0; y < maskSize; y++) {
       if (right[y] < 0) continue;
-      for (let x = left[y]; x <= right[y]; x++) regionLabels[y * maskSize + x] = 1;
+      let from = left[y], to = right[y];
+      for (const neighbor of [y - 1, y + 1]) {
+        if (neighbor < 0 || neighbor >= maskSize || right[neighbor] < 0) continue;
+        if (Math.abs(left[neighbor] - from) <= 3) from = Math.min(from, left[neighbor] - 1);
+        if (Math.abs(right[neighbor] - to) <= 3) to = Math.max(to, right[neighbor] + 1);
+      }
+      for (let x = Math.max(0, from); x <= Math.min(maskSize - 1, to); x++) regionLabels[y * maskSize + x] = 1;
     }
   }
 }
@@ -237,23 +250,28 @@ function makePattern() {
       boardSize = Number(document.querySelector('input[name="boardSize"]:checked').value);
       const pixels = sampleImage(boardSize);
       const labs = [];
+      const forcedWhite = [];
       const counts = new Map();
       for (let i = 0; i < pixels.length; i += 4) {
         const cellIndex = i / 4;
         const x = cellIndex % boardSize, y = Math.floor(cellIndex / boardSize);
         const maskX = Math.min(maskSize - 1, Math.floor((x + .5) / boardSize * maskSize));
         const maskY = Math.min(maskSize - 1, Math.floor((y + .5) / boardSize * maskSize));
-        if (!includedAt(maskX, maskY)) { labs.push(null); continue; }
+        if (!includedAt(maskX, maskY)) { labs.push(null); forcedWhite.push(false); continue; }
+        const isPixelArt = document.querySelector('input[name="sourceStyle"]:checked').value !== 'photo';
+        const rgb = [pixels[i], pixels[i + 1], pixels[i + 2]];
+        const white = isPixelArt && Math.min(...rgb) >= 225 && Math.max(...rgb) - Math.min(...rgb) <= 22;
+        forcedWhite.push(white);
         const target = lab([pixels[i], pixels[i + 1], pixels[i + 2]]);
         labs.push(target);
-        const match = nearest(target, colors);
+        const match = white ? colorByCode.get('H2') : nearest(target, colors);
         counts.set(match.code, (counts.get(match.code) || 0) + 1);
       }
       if (!counts.size) { alert('选区里没有可用的豆子，请改选整张图或用「保留」画笔添加区域。'); return; }
       const limit = Number($('colorLimit').value);
       const chosen = [...counts].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([code]) => colorByCode.get(code));
       // Reassign every cell using only the dominant colors to keep the chart practical.
-      board = labs.map((target) => target ? nearest(target, chosen).code : null);
+      board = labs.map((target, index) => target ? (forcedWhite[index] ? 'H2' : nearest(target, chosen).code) : null);
       selectedCode = null;
       renderBoard();
       renderPalette();
