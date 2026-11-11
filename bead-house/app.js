@@ -20,7 +20,7 @@ let manualMask = new Int8Array(maskSize * maskSize).fill(-1);
 let selectionPreset = 'all';
 let brushMode = null;
 let drawing = false;
-let boardZoom = 'fit';
+let boardZoom = 'detail';
 
 const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 const lab = ([r, g, b]) => {
@@ -75,10 +75,13 @@ function loadFile(file) {
     $('generateBtn').disabled = false;
     analyzeRegions();
     $('selectionPanel').hidden = false;
-    selectionPreset = 'all';
+    $('openSelectionBtn').hidden = false;
+    selectionPreset = 'main';
     manualMask.fill(-1);
     updatePresetButtons();
     renderSelectionPreview();
+    $('selectionSummary').textContent = '只要主体';
+    if (!$('selectionDialog').open) $('selectionDialog').showModal();
   };
   image.onerror = () => URL.revokeObjectURL(url);
   image.src = url;
@@ -89,11 +92,16 @@ uploadZone.addEventListener('dragover', (event) => { event.preventDefault(); upl
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
 uploadZone.addEventListener('drop', (event) => { event.preventDefault(); uploadZone.classList.remove('dragging'); loadFile(event.dataTransfer.files[0]); });
 $('colorLimit').addEventListener('input', (event) => { $('colorLimitValue').textContent = event.target.value; });
+document.querySelectorAll('input[name="sourceStyle"]').forEach((input) => input.addEventListener('change', () => {
+  if (!sourceImage) return;
+  analyzeRegions(); manualMask.fill(-1); renderSelectionPreview();
+}));
 
 function sampleImage(size) {
   const offscreen = document.createElement('canvas');
   offscreen.width = offscreen.height = size;
   const cx = offscreen.getContext('2d', { willReadFrequently: true });
+  cx.imageSmoothingEnabled = document.querySelector('input[name="sourceStyle"]:checked').value === 'photo';
   cx.fillStyle = '#ffffff';
   cx.fillRect(0, 0, size, size);
   const dimension = Math.min(sourceImage.width, sourceImage.height);
@@ -145,6 +153,21 @@ function analyzeRegions() {
   }
   components.sort((a, b) => b.length - a.length);
   components.forEach((component, index) => component.forEach((pixel) => { regionLabels[pixel] = index === 0 ? 1 : 2; }));
+  // A light face or shirt can share the background color. Fill the enclosed
+  // horizontal spans of the largest silhouette so those interior beads stay.
+  if (components[0]) {
+    const left = new Int16Array(maskSize).fill(maskSize);
+    const right = new Int16Array(maskSize).fill(-1);
+    for (const pixel of components[0]) {
+      const x = pixel % maskSize, y = Math.floor(pixel / maskSize);
+      left[y] = Math.min(left[y], x);
+      right[y] = Math.max(right[y], x);
+    }
+    for (let y = 0; y < maskSize; y++) {
+      if (right[y] < 0) continue;
+      for (let x = left[y]; x <= right[y]; x++) regionLabels[y * maskSize + x] = 1;
+    }
+  }
 }
 
 function includedAt(x, y) {
@@ -174,7 +197,11 @@ document.querySelectorAll('[data-preset]').forEach((button) => button.addEventLi
   selectionPreset = button.dataset.preset;
   manualMask.fill(-1);
   updatePresetButtons(); renderSelectionPreview();
+  $('selectionSummary').textContent = button.textContent;
 }));
+$('openSelectionBtn').addEventListener('click', () => $('selectionDialog').showModal());
+$('closeSelectionBtn').addEventListener('click', () => $('selectionDialog').close());
+$('confirmSelectionBtn').addEventListener('click', () => $('selectionDialog').close());
 function setBrush(mode) {
   brushMode = mode;
   $('keepBrush').classList.toggle('active', mode === 1);
@@ -235,6 +262,11 @@ function makePattern() {
       $('resultTools').hidden = false;
       $('paletteArea').hidden = false;
       $('boardBadge').textContent = `${boardSize} × ${boardSize} · ${new Set(board.filter(Boolean)).size} 色`;
+      requestAnimationFrame(() => {
+        setBoardZoom('detail');
+        boardWrap.scrollLeft = Math.max(0, (canvas.clientWidth - boardWrap.clientWidth) / 2);
+        boardWrap.scrollTop = Math.max(0, (canvas.clientHeight - boardWrap.clientHeight) / 2);
+      });
       if (matchMedia('(max-width:850px)').matches) boardWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (error) {
       console.error(error);
