@@ -170,6 +170,24 @@ function analyzeRegions() {
       left[y] = Math.round((left[y - 1] + left[y + 1]) / 2);
       right[y] = Math.round((right[y - 1] + right[y + 1]) / 2);
     }
+    // A bow or pale face can leave several rows with only the left outline.
+    // Restore the right edge when substantial edges on both sides of that
+    // short vertical gap agree on its position.
+    const repairedRight = new Int16Array(right);
+    for (let y = 0; y < maskSize; y++) {
+      if (right[y] < 0) continue;
+      let upper = -1, lower = -1;
+      for (let step = 1; step <= 8 && y - step >= 0; step++) {
+        if (right[y - step] >= right[y] + 6) { upper = y - step; break; }
+      }
+      for (let step = 1; step <= 8 && y + step < maskSize; step++) {
+        if (right[y + step] >= right[y] + 6) { lower = y + step; break; }
+      }
+      if (upper < 0 || lower < 0 || lower - upper > 9 || Math.abs(right[upper] - right[lower]) > 20) continue;
+      const fraction = (y - upper) / (lower - upper);
+      repairedRight[y] = Math.max(right[y], Math.round(right[upper] + (right[lower] - right[upper]) * fraction));
+    }
+    right.set(repairedRight);
     for (let y = 0; y < maskSize; y++) {
       if (right[y] < 0) continue;
       let from = left[y], to = right[y];
