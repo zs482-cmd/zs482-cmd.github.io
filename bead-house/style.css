@@ -3,3 +3,16 @@
 @media print{.outside,.room-header,.room-intro,.controls-panel,.room-footer,.tool-actions,.tool-note{display:none!important}.atelier{background:#fff}.room-content{padding:0}.workbench{display:block}.preview-panel{box-shadow:none;border:0;padding:0}.board-wrap{padding:0;background:#fff;margin:0;min-height:0;overflow:visible}.board-wrap canvas{width:180mm;box-shadow:none}.palette-area{display:block!important}.palette-list{max-height:none;grid-template-columns:repeat(8,1fr)}.swatch{break-inside:avoid}}
 
 [hidden]{display:none!important}
+
+/* The selection table and readable, numbered bead chart. */
+.selection-panel{margin-top:17px;padding:15px;background:#fff7f1;border:1px solid #e8d6cd;border-radius:14px}
+.selection-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}.selection-heading strong{font-size:13px}.selection-heading small{font-size:10px;color:#aa9287}
+.selection-presets{display:flex;flex-wrap:wrap;gap:6px}.selection-presets button,.brush-actions button{border:1px solid #dcc8bf;border-radius:8px;background:#fffdfb;color:#8e6f65;padding:7px 9px;font-size:11px}.selection-presets button.active,.brush-actions button.active,.tool-actions button.active{border-color:#b9786b;background:#f4ddd2;color:#7d4c42;font-weight:700}
+.selection-preview{margin-top:12px;max-width:280px;aspect-ratio:1;background:#e7ded9;border-radius:10px;overflow:hidden;border:1px solid #dfcbc1}.selection-preview canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none;cursor:crosshair}
+.brush-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.selection-panel .tiny-hint{margin:10px 0 0}
+.board-wrap:has(canvas:not([hidden])){display:block;text-align:center;max-height:680px;min-height:0;overflow:auto;padding:14px}
+.board-wrap canvas{display:block;max-width:none!important;aspect-ratio:auto!important;margin:0 auto;image-rendering:auto}
+.tool-actions button.active{box-shadow:0 0 0 1px #d5a393}
+.palette-list{grid-template-columns:repeat(auto-fill,minmax(135px,1fr));max-height:300px}.swatch{padding:8px;gap:8px}.swatch-number{font-size:10px;color:#b29b91;font-weight:700;min-width:17px}.swatch-color{width:27px;height:27px}.swatch b{font-size:13px}.swatch small{font-size:10px}
+@media(max-width:520px){.selection-preview{max-width:100%}.board-wrap:has(canvas:not([hidden])){max-height:520px}.tool-actions button{font-size:10px}}
+@media print{.selection-panel{display:none!important}.board-wrap:has(canvas:not([hidden])){max-height:none;overflow:visible}.board-wrap canvas{width:180mm!important;max-width:180mm!important}}

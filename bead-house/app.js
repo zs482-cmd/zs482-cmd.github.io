@@ -13,6 +13,14 @@ let sourceName = 'my-bead-pattern';
 let board = [];
 let boardSize = 52;
 let selectedCode = null;
+const maskSize = 104;
+let selectionPixels = null;
+let regionLabels = new Uint8Array(maskSize * maskSize);
+let manualMask = new Int8Array(maskSize * maskSize).fill(-1);
+let selectionPreset = 'all';
+let brushMode = null;
+let drawing = false;
+let boardZoom = 'fit';
 
 const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 const lab = ([r, g, b]) => {
@@ -65,6 +73,12 @@ function loadFile(file) {
     $('sourceThumb').hidden = false;
     uploadZone.querySelector('strong').textContent = file.name;
     $('generateBtn').disabled = false;
+    analyzeRegions();
+    $('selectionPanel').hidden = false;
+    selectionPreset = 'all';
+    manualMask.fill(-1);
+    updatePresetButtons();
+    renderSelectionPreview();
   };
   image.onerror = () => URL.revokeObjectURL(url);
   image.src = url;
@@ -89,6 +103,103 @@ function sampleImage(size) {
   return cx.getImageData(0, 0, size, size).data;
 }
 
+function analyzeRegions() {
+  selectionPixels = sampleImage(maskSize);
+  const labs = [];
+  for (let i = 0; i < selectionPixels.length; i += 4) labs.push(lab([selectionPixels[i], selectionPixels[i + 1], selectionPixels[i + 2]]));
+  const corners = [0, maskSize - 1, maskSize * (maskSize - 1), maskSize * maskSize - 1].map((i) => labs[i]);
+  const background = new Uint8Array(labs.length);
+  const queue = new Int32Array(labs.length);
+  let head = 0, tail = 0;
+  const closeToBorder = (index) => corners.some((corner) => distance(labs[index], corner) < 34 ** 2);
+  const add = (index) => { if (!background[index] && closeToBorder(index)) { background[index] = 1; queue[tail++] = index; } };
+  for (let x = 0; x < maskSize; x++) { add(x); add((maskSize - 1) * maskSize + x); }
+  for (let y = 0; y < maskSize; y++) { add(y * maskSize); add(y * maskSize + maskSize - 1); }
+  while (head < tail) {
+    const i = queue[head++], x = i % maskSize, y = Math.floor(i / maskSize);
+    if (x > 0) add(i - 1);
+    if (x < maskSize - 1) add(i + 1);
+    if (y > 0) add(i - maskSize);
+    if (y < maskSize - 1) add(i + maskSize);
+  }
+  regionLabels.fill(0);
+  const visited = new Uint8Array(labs.length);
+  const components = [];
+  for (let i = 0; i < labs.length; i++) {
+    if (background[i] || visited[i]) continue;
+    let start = 0, end = 0;
+    const indices = [];
+    queue[end++] = i; visited[i] = 1;
+    while (start < end) {
+      const index = queue[start++]; indices.push(index);
+      const x = index % maskSize, y = Math.floor(index / maskSize);
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= maskSize || ny >= maskSize) continue;
+        const next = ny * maskSize + nx;
+        if (!background[next] && !visited[next]) { visited[next] = 1; queue[end++] = next; }
+      }
+    }
+    components.push(indices);
+  }
+  components.sort((a, b) => b.length - a.length);
+  components.forEach((component, index) => component.forEach((pixel) => { regionLabels[pixel] = index === 0 ? 1 : 2; }));
+}
+
+function includedAt(x, y) {
+  const index = y * maskSize + x;
+  if (manualMask[index] !== -1) return manualMask[index] === 1;
+  const region = regionLabels[index];
+  return selectionPreset === 'all' ||
+    (selectionPreset === 'main' && region === 1) ||
+    (selectionPreset === 'main-decor' && region !== 0) ||
+    (selectionPreset === 'decor' && region === 2) ||
+    (selectionPreset === 'background' && region === 0);
+}
+function updatePresetButtons() {
+  document.querySelectorAll('[data-preset]').forEach((button) => button.classList.toggle('active', button.dataset.preset === selectionPreset));
+}
+function renderSelectionPreview() {
+  if (!selectionPixels) return;
+  const preview = $('selectionCanvas');
+  const cx = preview.getContext('2d');
+  cx.putImageData(new ImageData(new Uint8ClampedArray(selectionPixels), maskSize, maskSize), 0, 0);
+  cx.fillStyle = '#dad4d0bc';
+  for (let y = 0; y < maskSize; y++) for (let x = 0; x < maskSize; x++) {
+    if (!includedAt(x, y)) cx.fillRect(x, y, 1, 1);
+  }
+}
+document.querySelectorAll('[data-preset]').forEach((button) => button.addEventListener('click', () => {
+  selectionPreset = button.dataset.preset;
+  manualMask.fill(-1);
+  updatePresetButtons(); renderSelectionPreview();
+}));
+function setBrush(mode) {
+  brushMode = mode;
+  $('keepBrush').classList.toggle('active', mode === 1);
+  $('eraseBrush').classList.toggle('active', mode === 0);
+}
+$('keepBrush').addEventListener('click', () => setBrush(1));
+$('eraseBrush').addEventListener('click', () => setBrush(0));
+$('resetBrush').addEventListener('click', () => { manualMask.fill(-1); setBrush(null); renderSelectionPreview(); });
+function brushAt(event) {
+  if (brushMode === null) return;
+  const rect = $('selectionCanvas').getBoundingClientRect();
+  const x = Math.floor((event.clientX - rect.left) / rect.width * maskSize);
+  const y = Math.floor((event.clientY - rect.top) / rect.height * maskSize);
+  for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
+    if (dx * dx + dy * dy > 10) continue;
+    const nx = x + dx, ny = y + dy;
+    if (nx >= 0 && ny >= 0 && nx < maskSize && ny < maskSize) manualMask[ny * maskSize + nx] = brushMode;
+  }
+  renderSelectionPreview();
+}
+$('selectionCanvas').addEventListener('pointerdown', (event) => { if (brushMode === null) return; drawing = true; event.currentTarget.setPointerCapture(event.pointerId); brushAt(event); });
+$('selectionCanvas').addEventListener('pointermove', (event) => { if (drawing) brushAt(event); });
+$('selectionCanvas').addEventListener('pointerup', () => { drawing = false; });
+$('selectionCanvas').addEventListener('pointercancel', () => { drawing = false; });
+
 function makePattern() {
   if (!sourceImage) return;
   const button = $('generateBtn');
@@ -99,19 +210,23 @@ function makePattern() {
       boardSize = Number(document.querySelector('input[name="boardSize"]:checked').value);
       const pixels = sampleImage(boardSize);
       const labs = [];
-      const firstPass = [];
       const counts = new Map();
       for (let i = 0; i < pixels.length; i += 4) {
+        const cellIndex = i / 4;
+        const x = cellIndex % boardSize, y = Math.floor(cellIndex / boardSize);
+        const maskX = Math.min(maskSize - 1, Math.floor((x + .5) / boardSize * maskSize));
+        const maskY = Math.min(maskSize - 1, Math.floor((y + .5) / boardSize * maskSize));
+        if (!includedAt(maskX, maskY)) { labs.push(null); continue; }
         const target = lab([pixels[i], pixels[i + 1], pixels[i + 2]]);
         labs.push(target);
         const match = nearest(target, colors);
-        firstPass.push(match.code);
         counts.set(match.code, (counts.get(match.code) || 0) + 1);
       }
+      if (!counts.size) { alert('选区里没有可用的豆子，请改选整张图或用「保留」画笔添加区域。'); return; }
       const limit = Number($('colorLimit').value);
       const chosen = [...counts].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([code]) => colorByCode.get(code));
       // Reassign every cell using only the dominant colors to keep the chart practical.
-      board = labs.map((target) => nearest(target, chosen).code);
+      board = labs.map((target) => target ? nearest(target, chosen).code : null);
       selectedCode = null;
       renderBoard();
       renderPalette();
@@ -119,7 +234,7 @@ function makePattern() {
       canvas.hidden = false;
       $('resultTools').hidden = false;
       $('paletteArea').hidden = false;
-      $('boardBadge').textContent = `${boardSize} × ${boardSize} · ${new Set(board).size} 色`;
+      $('boardBadge').textContent = `${boardSize} × ${boardSize} · ${new Set(board.filter(Boolean)).size} 色`;
       if (matchMedia('(max-width:850px)').matches) boardWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (error) {
       console.error(error);
@@ -132,108 +247,121 @@ function makePattern() {
 }
 $('generateBtn').addEventListener('click', makePattern);
 
-function renderBoard() {
-  const cell = boardSize === 52 ? 12 : 7;
-  canvas.width = canvas.height = boardSize * cell;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+const chartCell = 30;
+const chartMargin = 40;
+function drawChart(cx, originY = chartMargin) {
+  const start = chartMargin, end = start + boardSize * chartCell;
+  cx.fillStyle = '#fff';
+  cx.fillRect(0, originY - chartMargin, end + chartMargin, boardSize * chartCell + chartMargin * 2);
+  cx.textAlign = 'center';
+  cx.textBaseline = 'middle';
   for (let y = 0; y < boardSize; y++) for (let x = 0; x < boardSize; x++) {
-    const color = colorByCode.get(board[y * boardSize + x]);
-    const px = x * cell, py = y * cell;
-    ctx.fillStyle = '#eae0d9';
-    ctx.fillRect(px, py, cell, cell);
-    ctx.fillStyle = color.hex;
-    ctx.beginPath();
-    ctx.arc(px + cell / 2, py + cell / 2, cell * .43, 0, Math.PI * 2);
-    ctx.fill();
+    const code = board[y * boardSize + x];
+    const px = start + x * chartCell, py = originY + y * chartCell;
+    if (code) {
+      const color = colorByCode.get(code);
+      cx.fillStyle = color.hex; cx.fillRect(px, py, chartCell, chartCell);
+      const brightness = color.rgb[0] * .299 + color.rgb[1] * .587 + color.rgb[2] * .114;
+      cx.fillStyle = brightness < 145 ? '#fff' : '#231e1b';
+      cx.font = 'bold 11px Arial,sans-serif';
+      cx.fillText(code, px + chartCell / 2, py + chartCell / 2 + 1);
+    }
   }
-  ctx.strokeStyle = '#715c5060';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= boardSize; i += 13) {
-    const at = i * cell + .5;
-    ctx.beginPath(); ctx.moveTo(at, 0); ctx.lineTo(at, canvas.height); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, at); ctx.lineTo(canvas.width, at); ctx.stroke();
+  cx.strokeStyle = '#bab6b3'; cx.lineWidth = .7;
+  for (let i = 0; i <= boardSize; i++) {
+    const atX = start + i * chartCell + .5, atY = originY + i * chartCell + .5;
+    cx.beginPath(); cx.moveTo(atX, originY); cx.lineTo(atX, originY + boardSize * chartCell); cx.stroke();
+    cx.beginPath(); cx.moveTo(start, atY); cx.lineTo(end, atY); cx.stroke();
   }
-  if (boardSize === 104) {
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#8b514e';
-    ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
+  cx.strokeStyle = '#35302d';
+  for (let i = 0; i <= boardSize; i += 5) {
+    cx.lineWidth = i % 10 === 0 || i === 52 ? 2.3 : 1.3;
+    const atX = start + i * chartCell + .5, atY = originY + i * chartCell + .5;
+    cx.beginPath(); cx.moveTo(atX, originY); cx.lineTo(atX, originY + boardSize * chartCell); cx.stroke();
+    cx.beginPath(); cx.moveTo(start, atY); cx.lineTo(end, atY); cx.stroke();
+  }
+  cx.fillStyle = '#504946'; cx.font = '12px Arial,sans-serif';
+  for (let i = 0; i < boardSize; i++) {
+    const x = start + (i + .5) * chartCell, y = originY + (i + .5) * chartCell;
+    cx.fillText(String(i + 1), x, originY - chartMargin / 2);
+    cx.fillText(String(i + 1), x, originY + boardSize * chartCell + chartMargin / 2);
+    cx.fillText(String(i + 1), chartMargin / 2, y);
+    cx.fillText(String(i + 1), end + chartMargin / 2, y);
   }
 }
+function setBoardZoom(mode) {
+  boardZoom = mode;
+  const natural = canvas.width;
+  canvas.style.width = mode === 'detail' ? `${natural}px` : `${Math.min(700, boardWrap.clientWidth - 28)}px`;
+  $('fitBtn').classList.toggle('active', mode === 'fit');
+  $('detailBtn').classList.toggle('active', mode === 'detail');
+  boardWrap.scrollTo({ top: 0, left: 0 });
+}
+function renderBoard() {
+  canvas.width = canvas.height = boardSize * chartCell + chartMargin * 2;
+  drawChart(ctx);
+  setBoardZoom(boardZoom);
+}
+$('fitBtn').addEventListener('click', () => setBoardZoom('fit'));
+$('detailBtn').addEventListener('click', () => setBoardZoom('detail'));
 
 function renderPalette() {
   const counts = new Map();
-  for (const code of board) counts.set(code, (counts.get(code) || 0) + 1);
+  for (const code of board) if (code) counts.set(code, (counts.get(code) || 0) + 1);
   const list = $('paletteList');
   list.replaceChildren();
-  for (const [code, count] of [...counts].sort((a, b) => b[1] - a[1])) {
+  for (const [index, [code, count]] of [...counts].sort((a, b) => b[1] - a[1]).entries()) {
     const color = colorByCode.get(code);
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `swatch${selectedCode === code ? ' active' : ''}`;
-    button.setAttribute('aria-label', `选择 ${code}，${count} 颗`);
+    button.setAttribute('aria-label', `第 ${index + 1} 种颜色，${code}，${count} 颗`);
+    const number = document.createElement('span');
+    number.className = 'swatch-number';
+    number.textContent = String(index + 1).padStart(2, '0');
     const square = document.createElement('span');
     square.className = 'swatch-color';
     square.style.background = color.hex;
     const details = document.createElement('span');
     details.innerHTML = `<b>${code}</b><small>${count} 颗</small>`;
-    button.append(square, details);
+    button.append(number, square, details);
     button.addEventListener('click', () => { selectedCode = code; renderPalette(); });
     list.append(button);
   }
-  $('beadTotal').textContent = `共 ${board.length.toLocaleString()} 颗`;
+  $('beadTotal').textContent = `共 ${[...counts.values()].reduce((sum, count) => sum + count, 0).toLocaleString()} 颗 · ${counts.size} 色`;
 }
 canvas.addEventListener('click', (event) => {
   if (!selectedCode || !board.length) return;
   const rect = canvas.getBoundingClientRect();
-  const x = Math.min(boardSize - 1, Math.max(0, Math.floor((event.clientX - rect.left) / rect.width * boardSize)));
-  const y = Math.min(boardSize - 1, Math.max(0, Math.floor((event.clientY - rect.top) / rect.height * boardSize)));
+  const scale = rect.width / canvas.width;
+  const x = Math.floor(((event.clientX - rect.left) / scale - chartMargin) / chartCell);
+  const y = Math.floor(((event.clientY - rect.top) / scale - chartMargin) / chartCell);
+  if (x < 0 || y < 0 || x >= boardSize || y >= boardSize) return;
   board[y * boardSize + x] = selectedCode;
   renderBoard(); renderPalette();
 });
 
 function makeExportCanvas() {
-  const cell = 30, margin = 54, header = 125, legendRows = Math.ceil(new Set(board).size / 6), legendHeight = 70 + legendRows * 42;
+  const usedCodes = [...new Set(board.filter(Boolean))];
+  const header = 150, legendRows = Math.ceil(usedCodes.length / 6), legendHeight = 95 + legendRows * 44;
   const out = document.createElement('canvas');
-  out.width = margin * 2 + boardSize * cell;
-  out.height = header + margin + boardSize * cell + legendHeight;
+  out.width = chartMargin * 2 + boardSize * chartCell;
+  out.height = header + boardSize * chartCell + chartMargin + legendHeight;
   const cx = out.getContext('2d');
   cx.fillStyle = '#fffdfa'; cx.fillRect(0, 0, out.width, out.height);
-  cx.fillStyle = '#493c38'; cx.font = 'bold 40px sans-serif'; cx.fillText('拼豆小屋 · BEAD ATELIER', margin, 62);
-  cx.font = '22px sans-serif'; cx.fillStyle = '#9a8179'; cx.fillText(`${boardSize} × ${boardSize} · MARD · ${new Set(board).size} colors · ${board.length} beads`, margin, 100);
-  for (let y = 0; y < boardSize; y++) for (let x = 0; x < boardSize; x++) {
-    const color = colorByCode.get(board[y * boardSize + x]);
-    const px = margin + x * cell, py = header + y * cell;
-    cx.fillStyle = color.hex; cx.fillRect(px, py, cell, cell);
-    cx.strokeStyle = '#5d504d40'; cx.lineWidth = .6; cx.strokeRect(px, py, cell, cell);
-    const brightness = color.rgb[0] * .299 + color.rgb[1] * .587 + color.rgb[2] * .114;
-    cx.fillStyle = brightness < 145 ? '#fff' : '#302726';
-    cx.font = 'bold 9px Arial,sans-serif'; cx.textAlign = 'center';
-    cx.fillText(color.code, px + cell / 2, py + 18);
-  }
-  cx.lineWidth = 2; cx.strokeStyle = '#ad7364';
-  for (let i = 0; i <= boardSize; i += 13) {
-    cx.beginPath(); cx.moveTo(margin + i * cell, header); cx.lineTo(margin + i * cell, header + boardSize * cell); cx.stroke();
-    cx.beginPath(); cx.moveTo(margin, header + i * cell); cx.lineTo(margin + boardSize * cell, header + i * cell); cx.stroke();
-  }
-  if (boardSize === 104) {
-    cx.lineWidth = 5; cx.strokeStyle = '#7b4a42';
-    cx.beginPath(); cx.moveTo(margin + 52 * cell, header); cx.lineTo(margin + 52 * cell, header + boardSize * cell); cx.stroke();
-    cx.beginPath(); cx.moveTo(margin, header + 52 * cell); cx.lineTo(margin + boardSize * cell, header + 52 * cell); cx.stroke();
-  }
-  cx.textAlign = 'center'; cx.fillStyle = '#6d5b54'; cx.font = 'bold 15px sans-serif';
-  for (let i = 0; i < boardSize; i += 13) {
-    cx.fillText(String(i + 1), margin + (i + 6.5) * cell, header - 10);
-    cx.fillText(String(i + 1), margin - 23, header + (i + 7) * cell);
-  }
-  const counts = new Map(); for (const code of board) counts.set(code, (counts.get(code) || 0) + 1);
-  const base = header + boardSize * cell + 48;
-  cx.textAlign = 'left'; cx.fillStyle = '#493c38'; cx.font = 'bold 22px sans-serif'; cx.fillText('配色 / COLOR KEY', margin, base);
+  cx.textAlign = 'left'; cx.textBaseline = 'alphabetic';
+  cx.fillStyle = '#493c38'; cx.font = 'bold 38px sans-serif'; cx.fillText('拼豆小屋 · BEAD ATELIER', chartMargin, 59);
+  const activeCount = board.filter(Boolean).length;
+  cx.font = '20px sans-serif'; cx.fillStyle = '#9a8179'; cx.fillText(`${boardSize} × ${boardSize} · MARD · ${usedCodes.length} 色 · ${activeCount} 颗`, chartMargin, 98);
+  drawChart(cx, header);
+  const counts = new Map(); for (const code of board) if (code) counts.set(code, (counts.get(code) || 0) + 1);
+  const base = header + boardSize * chartCell + 74;
+  cx.textAlign = 'left'; cx.textBaseline = 'alphabetic'; cx.fillStyle = '#493c38'; cx.font = 'bold 22px sans-serif'; cx.fillText('配色与用量 / COLOR KEY', chartMargin, base);
   [...counts].sort((a, b) => b[1] - a[1]).forEach(([code, count], i) => {
-    const x = margin + (i % 6) * Math.floor((out.width - 2 * margin) / 6), y = base + 25 + Math.floor(i / 6) * 42;
+    const x = chartMargin + (i % 6) * Math.floor((out.width - 2 * chartMargin) / 6), y = base + 25 + Math.floor(i / 6) * 44;
     cx.fillStyle = colorByCode.get(code).hex; cx.fillRect(x, y, 28, 28);
     cx.strokeStyle = '#6d5b5440'; cx.strokeRect(x, y, 28, 28);
-    cx.fillStyle = '#493c38'; cx.font = '17px sans-serif'; cx.fillText(`${code}  × ${count}`, x + 36, y + 20);
+    cx.fillStyle = '#493c38'; cx.font = '16px sans-serif'; cx.fillText(`${String(i + 1).padStart(2, '0')}  ${code}  × ${count}`, x + 36, y + 20);
   });
   return out;
 }

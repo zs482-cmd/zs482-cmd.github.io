@@ -40,6 +40,19 @@
           <aside class="controls-panel">
             <div class="panel-top"><span class="step">01 / 03</span><h3>放进一张照片</h3><p>图片只在你的浏览器里处理，不会上传到服务器。</p></div>
             <label id="uploadZone" class="upload-zone" for="imageInput" tabindex="0"><input id="imageInput" type="file" accept="image/*" hidden><span class="upload-icon">▧</span><strong>点击或拖入图片</strong><small>JPG、PNG、WEBP · 建议主体清晰</small><img id="sourceThumb" alt="已选择的图片预览" hidden></label>
+            <div id="selectionPanel" class="selection-panel" hidden>
+              <div class="selection-heading"><strong>选择要拼的部分</strong><small>自动分区可手动修正</small></div>
+              <div class="selection-presets" role="group" aria-label="图纸内容">
+                <button type="button" data-preset="all" class="active">整张图</button>
+                <button type="button" data-preset="main">只要主体</button>
+                <button type="button" data-preset="main-decor">主体＋装饰</button>
+                <button type="button" data-preset="decor">只要装饰</button>
+                <button type="button" data-preset="background">只要背景</button>
+              </div>
+              <div class="selection-preview"><canvas id="selectionCanvas" width="104" height="104" aria-label="图片保留区域预览"></canvas></div>
+              <div class="brush-actions"><button type="button" id="keepBrush">＋ 保留</button><button type="button" id="eraseBrush">－ 擦除</button><button type="button" id="resetBrush">重置选区</button></div>
+              <p class="tiny-hint">彩色区域会成为图纸，灰色区域留空。自动分区适合背景较简单的插画；复杂照片可按住鼠标或手指涂抹修正。</p>
+            </div>
             <div class="divider"></div>
             <div class="panel-top"><span class="step">02 / 03</span><h3>选择豆板大小</h3><p>每格是一颗拼豆。尺寸越大，细节越丰富。</p></div>
             <div class="board-options" role="radiogroup" aria-label="豆板尺寸"><label><input type="radio" name="boardSize" value="52" checked><span><b>52 × 52</b><small>一块豆板 · 2,704 格</small></span></label><label><input type="radio" name="boardSize" value="104"><span><b>104 × 104</b><small>四块豆板 · 10,816 格</small></span></label></div>
@@ -50,8 +63,8 @@
 
           <section class="preview-panel" aria-live="polite">
             <div class="preview-top"><div><span class="step">03 / 03</span><h3>你的拼豆图纸</h3></div><div id="boardBadge" class="board-badge">等待照片</div></div>
-            <div id="boardWrap" class="board-wrap"><div id="emptyPreview" class="empty-preview"><div class="sample-board" aria-hidden="true"><span>✿</span></div><strong>图纸会在这里慢慢出现</strong><p>上传照片，挑选豆板，再按下生成。</p></div><canvas id="boardCanvas" aria-label="拼豆图纸预览" hidden></canvas></div>
-            <div id="resultTools" class="result-tools" hidden><div class="tool-note">点选下方颜色，再点图纸上的豆子可以手动修改。</div><div class="tool-actions"><button id="downloadBtn" type="button">↓ 下载图纸 PNG</button><button id="printBtn" type="button">▤ 打印图纸</button></div></div>
+            <div id="boardWrap" class="board-wrap"><div id="emptyPreview" class="empty-preview"><div class="sample-board" aria-hidden="true"><span>✿</span></div><strong>图纸会在这里慢慢出现</strong><p>上传照片，挑选豆板，再按下生成。</p></div><canvas id="boardCanvas" aria-label="带行列编号和色号的拼豆图纸预览" hidden></canvas></div>
+            <div id="resultTools" class="result-tools" hidden><div class="tool-note">每格标注色号。点选下方颜色，再点格子可修改。</div><div class="tool-actions"><button id="fitBtn" type="button">▣ 全图</button><button id="detailBtn" type="button">⌕ 看清色号</button><button id="downloadBtn" type="button">↓ 下载图纸 PNG</button><button id="printBtn" type="button">▤ 打印图纸</button></div></div>
             <div id="paletteArea" class="palette-area" hidden><div class="palette-heading"><h4>配色与用量</h4><span id="beadTotal"></span></div><div id="paletteList" class="palette-list"></div></div>
           </section>
         </div>
